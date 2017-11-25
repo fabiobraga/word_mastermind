@@ -116,7 +116,7 @@ def play_game
 
   loop do
     attempt += 1
-    possible_words = filter_words(possible_words, current_guess, cows, bulls) unless current_guess.nil?
+    possible_words = filter_words(possible_words, current_guess, cows, bulls) if attempt > 1
     current_guess = guess_word(possible_words)
 
     if current_guess.nil?
