@@ -34,11 +34,11 @@ def filter_words(possible_words, current_guess = nil, cows = 0, bulls = 0)
   new_words
 end
 
-def filter_by_cow_score(possible_words, current_guess, cows)
+def filter_with(possible_words, current_guess, score)
   new_words = possible_words.clone
   possible_words.each do |word|
-    new_cow_score = calculate_cows(word, current_guess)
-    if (cows.zero? && new_cow_score > 0) || new_cow_score < cows
+    new_score = yield(word, current_guess)
+    if (score.zero? && new_score > 0) || new_score < score
       new_words.delete(word)
     end
   end
@@ -46,16 +46,16 @@ def filter_by_cow_score(possible_words, current_guess, cows)
   new_words
 end
 
-def filter_by_bull_score(possible_words, current_guess, bulls)
-  new_words = possible_words.clone
-  possible_words.each do |word|
-    new_bull_score = calculate_bulls(word, current_guess)
-    if (bulls.zero? && new_bull_score > 0) || new_bull_score < bulls
-      new_words.delete(word)
-    end
+def filter_by_cow_score(possible_words, current_guess, cows)
+  filter_with(possible_words, current_guess, cows) do |word, guess|
+    calculate_cows(word, guess)
   end
+end
 
-  new_words
+def filter_by_bull_score(possible_words, current_guess, bulls)
+  filter_with(possible_words, current_guess, bulls) do |word, guess|
+    calculate_bulls(word, guess)
+  end
 end
 
 def guess_word(possible_words)
