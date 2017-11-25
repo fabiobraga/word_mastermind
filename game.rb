@@ -33,6 +33,16 @@ def load_dictionary
   File.readlines(@options[:dictionary_path]).map(&:strip)
 end
 
+def validate_dictionary!(possible_words)
+  possible_words.each do |word|
+    next if word.chars.uniq.size == @options[:word_size]
+    puts "The dictionary file '#{@options[:dictionary_path]}' contains some invalid words like #{word}"
+    puts "The words in the dictionary should have #{@options[:word_size]}"\
+         ' letters and not contain any repeating letters'
+    exit 1
+  end
+end
+
 def calculate_bulls(word, guess)
   bull_score = 0
   guess.chars.each_with_index do |char, i|
@@ -101,6 +111,8 @@ def play_game
   turn = 0
 
   possible_words = load_dictionary
+
+  validate_dictionary!(possible_words)
 
   loop do
     turn += 1
