@@ -110,13 +110,13 @@ def play_game
   current_guess = nil
   bulls = 0
   cows = 0
-  attempt = 0
+  turn = 0
 
   possible_words = load_dictionary
 
   loop do
-    attempt += 1
-    possible_words = filter_words(possible_words, current_guess, cows, bulls) if attempt > 1
+    turn += 1
+    possible_words = filter_words(possible_words, current_guess, cows, bulls) if turn > 1
     current_guess = guess_word(possible_words)
 
     if current_guess.nil?
@@ -124,7 +124,7 @@ def play_game
       break
     end
 
-    puts "Attempt: #{attempt} - Guess: #{current_guess}"
+    puts "Turn: #{turn} - Guess: #{current_guess}"
     puts "Possibilities: #{possible_words.size}" if @options[:debug]
 
     cows = ask_cow_score
