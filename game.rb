@@ -42,7 +42,7 @@ def calculate_bulls(word, guess)
   bull_score
 end
 
-def calculate_cows(word, guess)
+def calculate_cows(word, guess, bulls)
   cow_score = 0
   selected_chars = word.chars
   guess.chars.each do |char|
@@ -52,37 +52,25 @@ def calculate_cows(word, guess)
     cow_score += 1
   end
 
-  cow_score
+  cow_score - bulls
+end
+
+def delete_word?(cows, bulls, new_cow_score, new_bull_score)
+  new_total_score = new_cow_score + new_bull_score
+
+  (new_total_score < cows + bulls) ||
+  ((bulls.zero? && new_bull_score > 0) || new_bull_score < bulls)
 end
 
 def filter_words(possible_words, current_guess = nil, cows = 0, bulls = 0)
-  new_words = filter_by_cow_score(possible_words, current_guess, cows)
-  new_words = filter_by_bull_score(new_words, current_guess, bulls)
-  new_words
-end
-
-def filter_with(possible_words, current_guess, score)
   new_words = possible_words.clone
   possible_words.each do |word|
-    new_score = yield(word, current_guess)
-    if (score.zero? && new_score > 0) || new_score < score
-      new_words.delete(word)
-    end
+    new_bull_score = calculate_bulls(word, current_guess)
+    new_cow_score = calculate_cows(word, current_guess, bulls)
+    new_words.delete(word) if delete_word?(cows, bulls, new_cow_score, new_bull_score)
   end
 
   new_words
-end
-
-def filter_by_cow_score(possible_words, current_guess, cows)
-  filter_with(possible_words, current_guess, cows) do |word, guess|
-    calculate_cows(word, guess)
-  end
-end
-
-def filter_by_bull_score(possible_words, current_guess, bulls)
-  filter_with(possible_words, current_guess, bulls) do |word, guess|
-    calculate_bulls(word, guess)
-  end
 end
 
 def guess_word(possible_words)
@@ -127,10 +115,9 @@ def play_game
     puts "Turn: #{turn} - Guess: #{current_guess}"
     puts "Possibilities: #{possible_words.size}" if @options[:debug]
 
-    cows = ask_cow_score
-    bulls = cows.zero? ? 0 : ask_bull_score
-
+    bulls = ask_bull_score
     break if bulls >= @options[:word_size]
+    cows = ask_cow_score
   end
 
   puts 'Game Over!'
