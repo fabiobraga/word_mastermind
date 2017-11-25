@@ -90,11 +90,11 @@ def guess_word(possible_words)
 end
 
 def ask_score(message)
-  puts message
+  print "#{message} "
   loop do
     user_input = gets.strip
     return user_input.to_i if user_input =~ /\A\d\z/
-    puts "Type a number between 0 and #{@options[:word_size]}"
+    print "Type a number between 0 and #{@options[:word_size]}: "
   end
 end
 
