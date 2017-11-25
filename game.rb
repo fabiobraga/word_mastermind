@@ -1,9 +1,36 @@
-DICTIONARY_PATH = 'data/english.txt'.freeze
-WORD_SIZE = 4
-DEBUG = true
+require 'optparse'
+
+# This will hold the options we parse
+@options = {
+  dictionary_path: 'data/english.txt',
+  debug: false,
+  word_size: 4
+}
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: game.rb [options]'
+  opts.on('--dictionary [FILE_PATH]', 'Use a custom dictionary file instead of the default (default \\\ data/english.txt)') do |v|
+    @options[:dictionary_path] = v
+  end
+
+  opts.on('-d', '--debug', 'Print additional log messages') do |v|
+    @options[:debug] = v
+  end
+
+  opts.on('-w', '--word-size [SIZE]', 'Specifies the size of the words in the dictionary (default \\\ 4)') do |v|
+    @options[:word_size] = v.to_i
+  end
+
+  opts.on("-h", "--help", "Prints this help") do
+    puts opts
+    exit
+  end
+end.parse!
+
+puts "Options: #{@options}" if @options[:debug]
 
 def load_dictionary
-  File.readlines(DICTIONARY_PATH).map(&:strip)
+  File.readlines(@options[:dictionary_path]).map(&:strip)
 end
 
 def calculate_bulls(word, guess)
@@ -67,7 +94,7 @@ def ask_score(message)
   loop do
     user_input = gets.strip
     return user_input.to_i if user_input =~ /\A\d\z/
-    puts "Type a number between 0 and #{WORD_SIZE}"
+    puts "Type a number between 0 and #{@options[:word_size]}"
   end
 end
 
@@ -98,12 +125,12 @@ def play_game
     end
 
     puts "Attempt: #{attempt} - Guess: #{current_guess}"
-    puts "Possibilities: #{possible_words.size}" if DEBUG
+    puts "Possibilities: #{possible_words.size}" if @options[:debug]
 
     cows = ask_cow_score
     bulls = cows.zero? ? 0 : ask_bull_score
 
-    break if bulls >= WORD_SIZE
+    break if bulls >= @options[:word_size]
   end
 
   puts 'Game Over!'
