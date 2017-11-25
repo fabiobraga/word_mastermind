@@ -34,7 +34,7 @@ Game Over!
 ```
 
 ## Using custom dictionaries
-You can customize the words available by informing a custom dictionary with the option `--dictionary`.
+The default dictionary already has more than 3000 4 letter words, but you can also customize the words available by informing a custom dictionary with the option `--dictionary`.
 
 The custom dictionary should be a file with a word per line, and every single word should have the same size and no special characters, numbers or spaces.
 
