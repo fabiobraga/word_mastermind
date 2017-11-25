@@ -64,7 +64,11 @@ end
 
 def ask_score(message)
   puts message
-  gets.to_i
+  loop do
+    user_input = gets.strip
+    return user_input.to_i if user_input =~ /\A\d\z/
+    puts "Type a number between 0 and #{WORD_SIZE}"
+  end
 end
 
 def ask_bull_score
